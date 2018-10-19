@@ -1,6 +1,14 @@
+# Visual Studio Code
+.vscode/
+
+# Virtual Environment
 venv/
+
+# Builds
 *.egg-info
 __pycache__/
 build/
 dist/
-.vscode/
+
+# Testing
+.pytest_cache/
