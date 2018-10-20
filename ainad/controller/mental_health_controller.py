@@ -1,30 +1,37 @@
 from sklearn.externals import joblib
 from flask import Response
+import json
 
 class MentalHealthController(object):
     def __init__(self, model_path):
         self.model = joblib.load(model_path)
-        self.gender_encoder = joblib.load("ml/label_Gender.sav")
-        self.self_employee_encoder = joblib.load("ml/label_self_employed.sav")
-        self.family_encoder = joblib.load("ml/label_family_history.sav")
-        self.no_employees_encoder = joblib.load("ml/label_no_employees.sav")
-        self.remote_work_encoder = joblib.load("ml/label_no_employees.sav")
-        self.tech_company_encoder = joblib.load("ml/label_tech_company.sav")
+        self.gender_encoder = joblib.load("ml/encoders/label_Gender.sav")
+        self.self_employee_encoder = joblib.load("ml/encoders/label_self_employed.sav")
+        self.family_encoder = joblib.load("ml/encoders/label_family_history.sav")
+        self.no_employees_encoder = joblib.load("ml/encoders/label_no_employees.sav")
+        self.remote_work_encoder = joblib.load("ml/encoders/label_remote_work.sav")
+        self.tech_company_encoder = joblib.load("ml/encoders/label_tech_company.sav")
+        self.work_interfere_encoder = joblib.load("ml/encoders/label_work_interfere.sav")
 
-    def predict(self, **kwargs):
+    def predict(self, request):
+        print(request.args)
+
         to_predict = [
-            kwargs.get("age"),
-            self.gender_encoder.transform(kwargs.get("gender")),
-            self.self_employee_encoder.transform(kwargs.get("self_employeed")),
-            self.family_encoder.transform(kwargs.get("family_history")),
-            self.no_employees_encoder.transform(kwargs.get("no_employees")),
-            self.remote_work_encoder.transform(kwargs.get("remote_work")),
-            self.tech_company_encoder.transform(kwargs.get("tech_company")),
+            request.args.get("age"),
+            self.gender_encoder.transform([request.args.get("gender")]),
+            self.self_employee_encoder.transform([request.args.get("self_employeed")]),
+            self.family_encoder.transform([request.args.get("family_history")]),
+            self.no_employees_encoder.transform([request.args.get("no_employees")]),
+            self.remote_work_encoder.transform([request.args.get("remote_work")]),
+            self.tech_company_encoder.transform([request.args.get("tech_company")]),
+            self.work_interfere_encoder.transform([request.args.get("work_interfere")])
         ]
 
-        self.model.predict([to_predict])
-
-        return Response(status=200)
+        pred = int(self.model.predict([to_predict])[0])
+        res = {
+            "prediction": pred,
+        }        
+        return Response(json.dumps(res), status=200)
     
     def transform_gender(self, gender):
         gender = gender.lower()
