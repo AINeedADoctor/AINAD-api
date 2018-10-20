@@ -14,7 +14,7 @@ class MentalHealthController(object):
         self.work_interfere_encoder = joblib.load("ml/encoders/label_work_interfere.sav")
 
     def predict(self, request):
-        ne = self.transform_n_employee(request.args.get("no_employees"))
+        ne = self.transform_n_employee(int(request.args.get("no_employees")))
 
         to_predict = [
             request.args.get("age"),
