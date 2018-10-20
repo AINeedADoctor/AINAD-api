@@ -19,12 +19,12 @@ class MentalHealthController(object):
         to_predict = [
             request.args.get("age"),
             self.gender_encoder.transform([request.args.get("gender")]),
-            self.self_employee_encoder.transform([request.args.get("self_employeed")]),
-            self.family_encoder.transform([request.args.get("family_history")]),
+            self.self_employee_encoder.transform([request.args.get("self_employeed").title()]),
+            self.family_encoder.transform([request.args.get("family_history").title()]),
             self.no_employees_encoder.transform([ne]),
-            self.remote_work_encoder.transform([request.args.get("remote_work")]),
-            self.tech_company_encoder.transform([request.args.get("tech_company")]),
-            self.work_interfere_encoder.transform([request.args.get("work_interfere")])
+            self.remote_work_encoder.transform([request.args.get("remote_work").title()]),
+            self.tech_company_encoder.transform([request.args.get("tech_company").title()]),
+            self.work_interfere_encoder.transform([request.args.get("work_interfere").title()])
         ]
 
         pred = int(self.model.predict([to_predict])[0])
