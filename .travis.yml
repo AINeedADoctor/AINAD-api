@@ -5,6 +5,7 @@ python:
 
 install:
   - pip install -r requirements.txt
+  - python ainad/setup.py install
 
 script:
   - pytest test/test.py

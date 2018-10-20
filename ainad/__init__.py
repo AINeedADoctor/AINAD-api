@@ -1,8 +1,8 @@
 from flask import Flask, request, Response
 from flask_httpauth import HTTPBasicAuth
 from flask_cors import CORS
-from controller.mental_health_controller import MentalHealthController
-from controller.prevent_stress_controller import PreventStressController
+from ainad.controller.mental_health_controller import MentalHealthController
+from ainad.controller.prevent_stress_controller import PreventStressController
 
 app = Flask(__name__)
 mental_health_ctrl = MentalHealthController("ml/ada_bost_clf.joblib")
@@ -21,3 +21,7 @@ def mental_health():
 @app.route('/prevent-stress')
 def prevent_stress():
     return prevent_stress_ctrl.predict(request)
+
+
+if __name__ == "__main__":
+    app.run()
