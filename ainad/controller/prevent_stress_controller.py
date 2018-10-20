@@ -1,6 +1,7 @@
 from sklearn.externals import joblib
 from flask import Response
 import json
+import numpy as np
 
 class PreventStressController(object):
     def __init__(self, model_path):
@@ -8,7 +9,7 @@ class PreventStressController(object):
 
     def predict(self, request):
         predict = [
-            request.args.get("sex"),
+            1 if request.args.get("sex") == "male" else 2,
             request.args.get("na"),     # Number adults  
             request.args.get("ho"),     # Health opinion
             request.args.get("lr"),     # last revision
@@ -18,13 +19,15 @@ class PreventStressController(object):
             request.args.get("ha"),     # heart attack
             request.args.get("asm"),    # Asma
             request.args.get("dep"),    # depresion y/n
+            request.args.get("civil"),  # Estat civil
             request.args.get("child"),  # How many children
             request.args.get("smoke"),  # smoke y/n
-            request.args.get("civil"),  # Estat civil
         ]
 
         res = {
-            "prediction": self.model.predict([predict])
+            "prediction": int(self.model.predict(
+                np.array(predict, dtype=float).reshape(1, -1)
+            )[0])
         }
 
         return Response(json.dumps(res), status=200)
