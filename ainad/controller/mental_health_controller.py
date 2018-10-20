@@ -14,14 +14,14 @@ class MentalHealthController(object):
         self.work_interfere_encoder = joblib.load("ml/encoders/label_work_interfere.sav")
 
     def predict(self, request):
-        print(request.args)
+        ne = self.transform_n_employee(request.args.get("no_employees"))
 
         to_predict = [
             request.args.get("age"),
             self.gender_encoder.transform([request.args.get("gender")]),
             self.self_employee_encoder.transform([request.args.get("self_employeed")]),
             self.family_encoder.transform([request.args.get("family_history")]),
-            self.no_employees_encoder.transform([request.args.get("no_employees")]),
+            self.no_employees_encoder.transform([ne]),
             self.remote_work_encoder.transform([request.args.get("remote_work")]),
             self.tech_company_encoder.transform([request.args.get("tech_company")]),
             self.work_interfere_encoder.transform([request.args.get("work_interfere")])
@@ -33,6 +33,24 @@ class MentalHealthController(object):
         }        
         return Response(json.dumps(res), status=200)
     
+    def transform_n_employee(self, ne):
+        if ne <= 5:
+            return '1-5'
+        
+        if ne <= 25:
+            return '6-25'
+        
+        if ne <= 100:
+            return '26-100'
+
+        if ne <= 500:
+            return '100-500'
+
+        if ne <= 1000:
+            return '500-1000'
+
+        return 'More than 1000'
+
     def transform_gender(self, gender):
         gender = gender.lower()
 
